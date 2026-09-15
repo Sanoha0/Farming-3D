@@ -1,12 +1,14 @@
 # Farming 3D
 
-A native Unreal Engine 5.8.2 third-person farming / life-sim / mining RPG prototype. The target is basically a fully 3D Stardew-style game: build a farm, grow crops, use physical tools, harvest resources, explore mines and expand the homestead in a high-detail 3D world.
+A native Unreal Engine 5.8.2 first-person farming / life-sim / mining RPG prototype with an optional third-person camera. The target is basically a fully 3D Stardew-style game: build a farm, grow crops, use physical tools, harvest resources, explore mines and expand the homestead in a high-detail 3D world.
 
 ## Current foundation
 
-- Third-person WASD + mouse character controller
+- First-person WASD + mouse character controller by default
+- Optional third-person camera, switchable at runtime
+- Camera-aware interaction/tool traces that follow the active perspective
+- First-person character yaw follows mouse/controller yaw; third person returns to orient-to-movement behavior
 - Sprint and jump
-- Camera-based interaction traces
 - Equippable tool states: hoe, watering can, pickaxe and axe
 - Real 3D tool mesh support with a separate hand transform for every tool
 - Blueprint events for tool equip/use animations and VFX
@@ -21,7 +23,7 @@ A native Unreal Engine 5.8.2 third-person farming / life-sim / mining RPG protot
 - Sleepable bed actor that restores energy and advances to the next morning
 - Interactable smoothly opening/closing door actor with lock support
 - Automatic day-cycle manager spawning through the game mode
-- Prototype HUD for clock, season, active tool, energy and inventory
+- Prototype HUD for clock, season, camera mode, active tool, energy and inventory
 - UE5 desktop renderer defaults aimed at Lumen + Virtual Shadow Maps
 
 ## Controls
@@ -29,7 +31,8 @@ A native Unreal Engine 5.8.2 third-person farming / life-sim / mining RPG protot
 | Input | Action |
 |---|---|
 | WASD | Move |
-| Mouse | Camera |
+| Mouse | Look / camera |
+| V | Toggle first-person / third-person |
 | Space | Jump |
 | Left Shift | Sprint |
 | E | Interact / harvest / open doors / sleep |
@@ -39,6 +42,8 @@ A native Unreal Engine 5.8.2 third-person farming / life-sim / mining RPG protot
 | 2 | Watering can |
 | 3 | Pickaxe |
 | 4 | Axe |
+
+The character starts in **first person**. The Blueprint default `bStartInFirstPerson` can be disabled if a specific character/campaign should instead boot in third person. First-person FOV, camera offset and third-person boom distance are all editable on the character Blueprint.
 
 ## Open it in UE 5.8.2
 
@@ -55,7 +60,7 @@ No map is forced in config yet on purpose, so the level being built in the edito
 
 Create Blueprint children of the C++ actors so art can be assigned without changing code:
 
-- `AFarmPlayerCharacter` → assign character mesh / animation Blueprint and fill the `ToolVisuals` map. Every entry has its own high-poly mesh, position, rotation and scale for the hand socket.
+- `AFarmPlayerCharacter` → assign character mesh / animation Blueprint, tune first-person camera offset/FOV if needed and fill the `ToolVisuals` map. Every entry has its own high-poly mesh, position, rotation and scale for the hand socket.
 - `AFarmSoilPlot` → assign soil mesh plus untilled, tilled and watered materials.
 - `AFarmCropActor` → assign growth-stage meshes and harvest values.
 - `AMineableNode` → assign high-detail rock / ore meshes and reward item IDs.
