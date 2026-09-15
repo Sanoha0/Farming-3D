@@ -1,0 +1,13 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.8",
+  "Category": "Games",
+  "Description": "A fully 3D farming, life-sim and mining RPG built for Unreal Engine 5.8.2.",
+  "Modules": [
+    {
+      "Name": "Farming3D",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}
