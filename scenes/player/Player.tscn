@@ -9,6 +9,8 @@ height = 1.9
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
 radius = 0.42
 height = 1.9
+radial_segments = 64
+rings = 24
 
 [sub_resource type="StandardMaterial3D" id="BodyMaterial"]
 albedo_color = Color(0.22, 0.43, 0.68, 1)
@@ -30,6 +32,7 @@ position = Vector3(0, 0.95, 0)
 shape = SubResource("CapsuleShape_player")
 
 [node name="Body" type="MeshInstance3D" parent="."]
+visible = false
 position = Vector3(0, 0.95, 0)
 mesh = SubResource("CapsuleMesh_player")
 material_override = SubResource("BodyMaterial")
@@ -48,6 +51,7 @@ position = Vector3(0.46, -0.38, -0.72)
 rotation = Vector3(-0.15, -0.1, 0.2)
 
 [node name="ToolMesh" type="MeshInstance3D" parent="Head/FirstPersonCamera/ToolAnchor"]
+visible = false
 mesh = SubResource("ToolMesh")
 material_override = SubResource("ToolMaterial")
 
