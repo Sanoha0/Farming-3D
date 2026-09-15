@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/resource_node.gd" id="1_resource"]
+
+[sub_resource type="CylinderShape3D" id="TrunkShape"]
+radius = 0.42
+height = 3.8
+
+[sub_resource type="CylinderMesh" id="TrunkMesh"]
+top_radius = 0.34
+bottom_radius = 0.48
+height = 3.8
+radial_segments = 28
+
+[sub_resource type="StandardMaterial3D" id="BarkMat"]
+albedo_color = Color(0.31, 0.18, 0.08, 1)
+roughness = 0.95
+
+[sub_resource type="SphereMesh" id="CanopyMesh"]
+radius = 1.8
+height = 3.0
+radial_segments = 32
+rings = 20
+
+[sub_resource type="StandardMaterial3D" id="LeafMat"]
+albedo_color = Color(0.13, 0.43, 0.16, 1)
+roughness = 0.9
+
+[node name="HarvestableTree" type="StaticBody3D"]
+script = ExtResource("1_resource")
+required_tool = "axe"
+durability = 5
+reward_item = "wood"
+reward_amount = 5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 1.9, 0)
+shape = SubResource("TrunkShape")
+
+[node name="Trunk" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.9, 0)
+mesh = SubResource("TrunkMesh")
+material_override = SubResource("BarkMat")
+
+[node name="Canopy" type="MeshInstance3D" parent="."]
+position = Vector3(0, 4.1, 0)
+mesh = SubResource("CanopyMesh")
+material_override = SubResource("LeafMat")

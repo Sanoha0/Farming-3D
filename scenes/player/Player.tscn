@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
+radius = 0.42
+height = 1.9
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+radius = 0.42
+height = 1.9
+
+[sub_resource type="StandardMaterial3D" id="BodyMaterial"]
+albedo_color = Color(0.22, 0.43, 0.68, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="ToolMesh"]
+size = Vector3(0.12, 0.12, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="ToolMaterial"]
+albedo_color = Color(0.31, 0.19, 0.1, 1)
+metallic = 0.15
+roughness = 0.5
+
+[node name="Player" type="CharacterBody3D" groups=["player"]]
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.95, 0)
+shape = SubResource("CapsuleShape_player")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.95, 0)
+mesh = SubResource("CapsuleMesh_player")
+material_override = SubResource("BodyMaterial")
+cast_shadow = 1
+
+[node name="Head" type="Node3D" parent="."]
+position = Vector3(0, 1.68, 0)
+
+[node name="FirstPersonCamera" type="Camera3D" parent="Head"]
+current = true
+fov = 78.0
+near = 0.05
+
+[node name="ToolAnchor" type="Node3D" parent="Head/FirstPersonCamera"]
+position = Vector3(0.46, -0.38, -0.72)
+rotation = Vector3(-0.15, -0.1, 0.2)
+
+[node name="ToolMesh" type="MeshInstance3D" parent="Head/FirstPersonCamera/ToolAnchor"]
+mesh = SubResource("ToolMesh")
+material_override = SubResource("ToolMaterial")
+
+[node name="ThirdPersonPivot" type="Node3D" parent="."]
+position = Vector3(0, 1.45, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="ThirdPersonPivot"]
+spring_length = 4.0
+margin = 0.08
+collision_mask = 1
+
+[node name="ThirdPersonCamera" type="Camera3D" parent="ThirdPersonPivot/SpringArm3D"]
+current = false
+fov = 72.0

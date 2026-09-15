@@ -1,0 +1,131 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/door.gd" id="1_door"]
+
+[sub_resource type="BoxMesh" id="UnitBox"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="WoodMat"]
+albedo_color = Color(0.47, 0.28, 0.13, 1)
+roughness = 0.88
+
+[sub_resource type="StandardMaterial3D" id="TrimMat"]
+albedo_color = Color(0.78, 0.72, 0.57, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="RoofMat"]
+albedo_color = Color(0.16, 0.13, 0.12, 1)
+roughness = 0.94
+
+[sub_resource type="StandardMaterial3D" id="DoorMat"]
+albedo_color = Color(0.25, 0.12, 0.055, 1)
+roughness = 0.8
+
+[sub_resource type="BoxShape3D" id="SideWallShape"]
+size = Vector3(0.25, 3.1, 7.0)
+
+[sub_resource type="BoxShape3D" id="BackWallShape"]
+size = Vector3(8.0, 3.1, 0.25)
+
+[sub_resource type="BoxShape3D" id="FrontSegmentShape"]
+size = Vector3(3.0, 3.1, 0.25)
+
+[sub_resource type="BoxShape3D" id="DoorShape"]
+size = Vector3(1.15, 2.25, 0.16)
+
+[node name="Cabin" type="Node3D"]
+
+[node name="HighPolyModelSlot" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="Structure" type="StaticBody3D" parent="."]
+
+[node name="LeftWallCollision" type="CollisionShape3D" parent="Structure"]
+position = Vector3(-4, 1.55, 0)
+shape = SubResource("SideWallShape")
+
+[node name="RightWallCollision" type="CollisionShape3D" parent="Structure"]
+position = Vector3(4, 1.55, 0)
+shape = SubResource("SideWallShape")
+
+[node name="BackWallCollision" type="CollisionShape3D" parent="Structure"]
+position = Vector3(0, 1.55, -3.5)
+shape = SubResource("BackWallShape")
+
+[node name="FrontLeftCollision" type="CollisionShape3D" parent="Structure"]
+position = Vector3(-2.5, 1.55, 3.5)
+shape = SubResource("FrontSegmentShape")
+
+[node name="FrontRightCollision" type="CollisionShape3D" parent="Structure"]
+position = Vector3(2.5, 1.55, 3.5)
+shape = SubResource("FrontSegmentShape")
+
+[node name="LeftWall" type="MeshInstance3D" parent="Structure"]
+position = Vector3(-4, 1.55, 0)
+scale = Vector3(0.25, 3.1, 7)
+mesh = SubResource("UnitBox")
+material_override = SubResource("WoodMat")
+
+[node name="RightWall" type="MeshInstance3D" parent="Structure"]
+position = Vector3(4, 1.55, 0)
+scale = Vector3(0.25, 3.1, 7)
+mesh = SubResource("UnitBox")
+material_override = SubResource("WoodMat")
+
+[node name="BackWall" type="MeshInstance3D" parent="Structure"]
+position = Vector3(0, 1.55, -3.5)
+scale = Vector3(8, 3.1, 0.25)
+mesh = SubResource("UnitBox")
+material_override = SubResource("WoodMat")
+
+[node name="FrontLeft" type="MeshInstance3D" parent="Structure"]
+position = Vector3(-2.5, 1.55, 3.5)
+scale = Vector3(3, 3.1, 0.25)
+mesh = SubResource("UnitBox")
+material_override = SubResource("WoodMat")
+
+[node name="FrontRight" type="MeshInstance3D" parent="Structure"]
+position = Vector3(2.5, 1.55, 3.5)
+scale = Vector3(3, 3.1, 0.25)
+mesh = SubResource("UnitBox")
+material_override = SubResource("WoodMat")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.1, 0)
+scale = Vector3(8, 0.2, 7)
+mesh = SubResource("UnitBox")
+material_override = SubResource("TrimMat")
+
+[node name="RoofLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-2.05, 4.05, 0)
+rotation = Vector3(0, 0, -0.48)
+scale = Vector3(4.75, 0.18, 7.8)
+mesh = SubResource("UnitBox")
+material_override = SubResource("RoofMat")
+
+[node name="RoofRight" type="MeshInstance3D" parent="."]
+position = Vector3(2.05, 4.05, 0)
+rotation = Vector3(0, 0, 0.48)
+scale = Vector3(4.75, 0.18, 7.8)
+mesh = SubResource("UnitBox")
+material_override = SubResource("RoofMat")
+
+[node name="Porch" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.18, 4.5)
+scale = Vector3(6.5, 0.28, 2.0)
+mesh = SubResource("UnitBox")
+material_override = SubResource("TrimMat")
+
+[node name="Door" type="AnimatableBody3D" parent="."]
+position = Vector3(-0.6, 1.15, 3.62)
+script = ExtResource("1_door")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door"]
+position = Vector3(0.575, 0, 0)
+shape = SubResource("DoorShape")
+
+[node name="Mesh" type="MeshInstance3D" parent="Door"]
+position = Vector3(0.575, 0, 0)
+scale = Vector3(1.15, 2.25, 0.16)
+mesh = SubResource("UnitBox")
+material_override = SubResource("DoorMat")
