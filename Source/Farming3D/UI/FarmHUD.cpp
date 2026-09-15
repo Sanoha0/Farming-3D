@@ -61,6 +61,16 @@ void AFarmHUD::DrawHUD()
         return;
     }
 
+    DrawText(
+        FString::Printf(TEXT("Camera: %s  [V to toggle]"), FarmPlayer->IsFirstPerson() ? TEXT("First Person") : TEXT("Third Person")),
+        FLinearColor::White,
+        X,
+        Y,
+        Font,
+        1.0f,
+        false);
+    Y += LineHeight;
+
     DrawText(FString::Printf(TEXT("Tool: %s"), *ToolToString(FarmPlayer->GetActiveTool())), FLinearColor::White, X, Y, Font, 1.0f, false);
     Y += LineHeight;
 
