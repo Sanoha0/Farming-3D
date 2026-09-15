@@ -1,14 +1,14 @@
 extends StaticBody3D
 
-@export_enum("pickaxe", "axe") var required_tool := "pickaxe"
-@export var durability := 3
-@export var reward_item := "stone"
-@export var reward_amount := 2
+@export_enum("pickaxe", "axe") var required_tool: String = "pickaxe"
+@export var durability: int = 3
+@export var reward_item: String = "stone"
+@export var reward_amount: int = 2
 
-var remaining := 0
+var remaining: int = 0
 
 func _ready() -> void:
-	remaining = max(durability, 1)
+	remaining = durability if durability > 0 else 1
 
 func apply_tool(tool_name: String, player) -> bool:
 	if tool_name != required_tool or remaining <= 0:
