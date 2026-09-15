@@ -58,7 +58,8 @@ func advance_day() -> void:
 	_update_visuals()
 
 func _update_visuals() -> void:
-	untilled_visual.visible = not tilled
+	# Untilled plots visually blend into the world instead of showing a preset grid.
+	untilled_visual.visible = false
 	tilled_visual.visible = tilled and not watered
 	watered_visual.visible = tilled and watered
 	crop_visual.visible = planted
