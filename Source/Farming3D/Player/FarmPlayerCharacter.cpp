@@ -12,6 +12,7 @@
 #include "Interaction/FarmInteractable.h"
 #include "Inventory/FarmInventoryComponent.h"
 #include "Mining/MineableNode.h"
+#include "Player/FarmPlayerStatsComponent.h"
 
 AFarmPlayerCharacter::AFarmPlayerCharacter()
 {
@@ -40,6 +41,7 @@ AFarmPlayerCharacter::AFarmPlayerCharacter()
     FollowCamera->bUsePawnControlRotation = false;
 
     Inventory = CreateDefaultSubobject<UFarmInventoryComponent>(TEXT("Inventory"));
+    Stats = CreateDefaultSubobject<UFarmPlayerStatsComponent>(TEXT("Stats"));
 
     ToolVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ToolVisual"));
     ToolVisual->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
@@ -171,6 +173,23 @@ void AFarmPlayerCharacter::UpdateToolVisual()
     ToolVisual->SetVisibility(true, true);
 }
 
+float AFarmPlayerCharacter::GetToolEnergyCost(EFarmToolType ToolType) const
+{
+    switch (ToolType)
+    {
+    case EFarmToolType::Hoe:
+        return HoeEnergyCost;
+    case EFarmToolType::WateringCan:
+        return WateringCanEnergyCost;
+    case EFarmToolType::Pickaxe:
+        return PickaxeEnergyCost;
+    case EFarmToolType::Axe:
+        return AxeEnergyCost;
+    default:
+        return 0.0f;
+    }
+}
+
 bool AFarmPlayerCharacter::TraceFromCamera(FHitResult& OutHit, float Distance) const
 {
     if (!FollowCamera || !GetWorld())
@@ -202,6 +221,12 @@ void AFarmPlayerCharacter::Interact()
 
 void AFarmPlayerCharacter::UseTool()
 {
+    const float EnergyCost = GetToolEnergyCost(ActiveTool);
+    if (Stats && !Stats->SpendEnergy(EnergyCost))
+    {
+        return;
+    }
+
     OnToolUsed(ActiveTool);
 
     FHitResult Hit;

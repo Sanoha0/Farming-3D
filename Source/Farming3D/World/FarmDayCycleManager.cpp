@@ -30,6 +30,12 @@ void AFarmDayCycleManager::Tick(float DeltaSeconds)
     }
 }
 
+void AFarmDayCycleManager::AdvanceToNextDay(float WakeHour)
+{
+    MinutesIntoDay = FMath::Clamp(WakeHour, 0.0f, 23.99f) * 60.0f;
+    AdvanceDay();
+}
+
 void AFarmDayCycleManager::AdvanceDay()
 {
     ++DayOfSeason;

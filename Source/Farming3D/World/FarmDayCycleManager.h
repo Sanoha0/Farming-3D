@@ -35,6 +35,9 @@ public:
     UFUNCTION(BlueprintCallable, Category="Farm|Time")
     void SetTimePaused(bool bPaused) { bTimePaused = bPaused; }
 
+    UFUNCTION(BlueprintCallable, Category="Farm|Time")
+    void AdvanceToNextDay(float WakeHour = 6.0f);
+
     UPROPERTY(BlueprintAssignable, Category="Farm|Time")
     FFarmNewDay OnNewDay;
 

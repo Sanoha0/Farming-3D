@@ -8,6 +8,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UFarmInventoryComponent;
+class UFarmPlayerStatsComponent;
 class UStaticMeshComponent;
 
 UCLASS()
@@ -20,6 +21,9 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Farm|Inventory")
     UFarmInventoryComponent* GetInventory() const { return Inventory; }
+
+    UFUNCTION(BlueprintPure, Category="Farm|Stats")
+    UFarmPlayerStatsComponent* GetStats() const { return Stats; }
 
     UFUNCTION(BlueprintPure, Category="Farm|Tools")
     EFarmToolType GetActiveTool() const { return ActiveTool; }
@@ -59,6 +63,7 @@ private:
     void SelectAxe();
     bool TraceFromCamera(FHitResult& OutHit, float Distance) const;
     void UpdateToolVisual();
+    float GetToolEnergyCost(EFarmToolType ToolType) const;
 
     UPROPERTY(VisibleAnywhere, Category="Camera")
     TObjectPtr<USpringArmComponent> CameraBoom;
@@ -69,11 +74,12 @@ private:
     UPROPERTY(VisibleAnywhere, Category="Inventory")
     TObjectPtr<UFarmInventoryComponent> Inventory;
 
+    UPROPERTY(VisibleAnywhere, Category="Stats")
+    TObjectPtr<UFarmPlayerStatsComponent> Stats;
+
     UPROPERTY(VisibleAnywhere, Category="Tools")
     TObjectPtr<UStaticMeshComponent> ToolVisual;
 
-    // Each high-poly tool needs its own grip transform; a pickaxe and watering can
-    // cannot share a single hand offset and still look correct.
     UPROPERTY(EditDefaultsOnly, Category="Tools")
     TMap<EFarmToolType, FFarmToolVisualConfig> ToolVisuals;
 
@@ -82,6 +88,18 @@ private:
 
     UPROPERTY(EditAnywhere, Category="Tools", meta=(ClampMin="100.0"))
     float ToolDistance = 550.0f;
+
+    UPROPERTY(EditAnywhere, Category="Tools|Energy", meta=(ClampMin="0.0"))
+    float HoeEnergyCost = 2.0f;
+
+    UPROPERTY(EditAnywhere, Category="Tools|Energy", meta=(ClampMin="0.0"))
+    float WateringCanEnergyCost = 1.0f;
+
+    UPROPERTY(EditAnywhere, Category="Tools|Energy", meta=(ClampMin="0.0"))
+    float PickaxeEnergyCost = 3.0f;
+
+    UPROPERTY(EditAnywhere, Category="Tools|Energy", meta=(ClampMin="0.0"))
+    float AxeEnergyCost = 3.0f;
 
     UPROPERTY(EditAnywhere, Category="Movement", meta=(ClampMin="0.0"))
     float WalkSpeed = 420.0f;

@@ -5,6 +5,7 @@
 #include "FarmTypes.h"
 #include "Inventory/FarmInventoryComponent.h"
 #include "Player/FarmPlayerCharacter.h"
+#include "Player/FarmPlayerStatsComponent.h"
 #include "World/FarmDayCycleManager.h"
 
 namespace
@@ -61,8 +62,22 @@ void AFarmHUD::DrawHUD()
     }
 
     DrawText(FString::Printf(TEXT("Tool: %s"), *ToolToString(FarmPlayer->GetActiveTool())), FLinearColor::White, X, Y, Font, 1.0f, false);
-    Y += LineHeight * 1.5f;
+    Y += LineHeight;
 
+    if (UFarmPlayerStatsComponent* Stats = FarmPlayer->GetStats())
+    {
+        DrawText(
+            FString::Printf(TEXT("Energy: %.0f / %.0f"), Stats->GetEnergy(), Stats->GetMaxEnergy()),
+            FLinearColor::White,
+            X,
+            Y,
+            Font,
+            1.0f,
+            false);
+        Y += LineHeight;
+    }
+
+    Y += LineHeight * 0.5f;
     DrawText(TEXT("Inventory"), FLinearColor::White, X, Y, Font, 1.0f, false);
     Y += LineHeight;
 
