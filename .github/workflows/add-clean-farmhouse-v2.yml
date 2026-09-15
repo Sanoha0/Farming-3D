@@ -1,0 +1,37 @@
+name: Add Clean Farmhouse V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-clean-farmhouse-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Download baked Higgsfield farmhouse under fresh filename
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/models/higgsfield
+          curl -fL --retry 3 --retry-delay 2 \
+            'https://695d5a9fc666e505559765690b5db7dd.r2.cloudflarestorage.com/3d-scene-builder/projects/2db4d662-d12d-4ef5-b151-124a8e9bb4b4/revisions/00000002-bake-farmhouse-for-godot-v2/preview.glb?X-Amz-Expires=900&X-Amz-Date=20260915T161903Z&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=f4fb15da414147020cebc9c7007b912d%2F20260915%2Fauto%2Fs3%2Faws4_request&X-Amz-SignedHeaders=host&X-Amz-Signature=8a748f9931bca14aa9e39e347410e50e1c80fd05f606a481152d8ec981b9544f' \
+            -o assets/models/higgsfield/farmhouse_highpoly_v2.glb
+          test "$(stat -c%s assets/models/higgsfield/farmhouse_highpoly_v2.glb)" -gt 14000000
+      - name: Commit farmhouse v2
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/models/higgsfield/farmhouse_highpoly_v2.glb
+          git commit -m 'Add clean Higgsfield farmhouse v2 under fresh filename'
+          git push origin HEAD:main
