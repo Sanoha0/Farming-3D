@@ -1,19 +1,39 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/resource_node.gd" id="1_resource"]
 
 [sub_resource type="SphereShape3D" id="RockShape"]
-radius = 0.8
+radius = 0.95
 
-[sub_resource type="SphereMesh" id="RockMesh"]
-radius = 0.8
-height = 1.45
-radial_segments = 32
-rings = 18
+[sub_resource type="SphereMesh" id="RockCoreMesh"]
+radius = 0.9
+height = 1.6
+radial_segments = 64
+rings = 36
+
+[sub_resource type="SphereMesh" id="RockDetailMesh"]
+radius = 0.48
+height = 0.82
+radial_segments = 48
+rings = 28
+
+[sub_resource type="TorusMesh" id="CrackRing"]
+inner_radius = 0.03
+outer_radius = 0.22
+rings = 20
+ring_segments = 32
 
 [sub_resource type="StandardMaterial3D" id="RockMaterial"]
-albedo_color = Color(0.29, 0.31, 0.34, 1)
+albedo_color = Color(0.22, 0.235, 0.25, 1)
+roughness = 0.98
+
+[sub_resource type="StandardMaterial3D" id="RockLightMaterial"]
+albedo_color = Color(0.31, 0.325, 0.345, 1)
 roughness = 0.96
+
+[sub_resource type="StandardMaterial3D" id="CrackMaterial"]
+albedo_color = Color(0.08, 0.085, 0.09, 1)
+roughness = 1.0
 
 [node name="MineableRock" type="StaticBody3D"]
 script = ExtResource("1_resource")
@@ -23,11 +43,49 @@ reward_item = "stone"
 reward_amount = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-position = Vector3(0, 0.72, 0)
+position = Vector3(0, 0.78, 0)
 shape = SubResource("RockShape")
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0.72, 0)
-scale = Vector3(1.0, 0.82, 1.15)
-mesh = SubResource("RockMesh")
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Core" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.78, 0)
+rotation_degrees = Vector3(4, 13, -6)
+scale = Vector3(1.1, 0.78, 1.28)
+mesh = SubResource("RockCoreMesh")
 material_override = SubResource("RockMaterial")
+
+[node name="LobeLeft" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.62, 0.63, 0.12)
+rotation_degrees = Vector3(13, -22, 8)
+scale = Vector3(1.0, 0.75, 0.88)
+mesh = SubResource("RockDetailMesh")
+material_override = SubResource("RockLightMaterial")
+
+[node name="LobeRight" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.67, 0.54, -0.18)
+rotation_degrees = Vector3(-9, 28, -11)
+scale = Vector3(0.86, 0.68, 1.04)
+mesh = SubResource("RockDetailMesh")
+material_override = SubResource("RockMaterial")
+
+[node name="LobeTop" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.1, 1.13, 0.12)
+rotation_degrees = Vector3(19, 37, 2)
+scale = Vector3(0.76, 0.54, 0.72)
+mesh = SubResource("RockDetailMesh")
+material_override = SubResource("RockLightMaterial")
+
+[node name="CrackA" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.32, 0.84, 0.92)
+rotation_degrees = Vector3(82, 20, 15)
+scale = Vector3(1.5, 0.45, 0.7)
+mesh = SubResource("CrackRing")
+material_override = SubResource("CrackMaterial")
+
+[node name="CrackB" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.35, 0.52, 0.91)
+rotation_degrees = Vector3(74, -18, -12)
+scale = Vector3(1.0, 0.35, 0.6)
+mesh = SubResource("CrackRing")
+material_override = SubResource("CrackMaterial")
