@@ -5,11 +5,13 @@
 #include "GameFramework/Controller.h"
 #include "Inventory/FarmInventoryComponent.h"
 #include "Player/FarmPlayerCharacter.h"
+#include "UI/FarmHUD.h"
 #include "World/FarmDayCycleManager.h"
 
 AFarming3DGameMode::AFarming3DGameMode()
 {
     DefaultPawnClass = AFarmPlayerCharacter::StaticClass();
+    HUDClass = AFarmHUD::StaticClass();
     DayCycleClass = AFarmDayCycleManager::StaticClass();
 }
 
