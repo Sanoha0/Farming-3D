@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/door.gd" id="1_door"]
 
@@ -15,8 +15,6 @@ rings = 4
 [sub_resource type="StandardMaterial3D" id="WoodMat"]
 albedo_color = Color(0.39, 0.21, 0.10, 1)
 roughness = 0.9
-
-[sub_resource type="SidingMaterial" id="Unused"]
 
 [sub_resource type="StandardMaterial3D" id="TrimMat"]
 albedo_color = Color(0.84, 0.79, 0.65, 1)
