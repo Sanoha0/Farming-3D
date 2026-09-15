@@ -11,14 +11,17 @@ A native Unreal Engine 5.8.2 third-person farming / life-sim / mining RPG protot
 - Real 3D tool mesh support with a separate hand transform for every tool
 - Blueprint events for tool equip/use animations and VFX
 - Inventory component with stackable item IDs
+- Player energy / stamina component with configurable tool costs
 - Tillable / waterable soil plots
 - Seed consumption, crop growth and harvesting
 - Mineable resource nodes with tool requirements and durability
 - Chop-able trees with axe durability, wood rewards and optional stump meshes
 - Calendar with Spring / Summer / Fall / Winter, 28-day seasons and years
 - Configurable real-time day length
+- Sleepable bed actor that restores energy and advances to the next morning
+- Interactable smoothly opening/closing door actor with lock support
 - Automatic day-cycle manager spawning through the game mode
-- Prototype HUD for clock, season, active tool and inventory
+- Prototype HUD for clock, season, active tool, energy and inventory
 - UE5 desktop renderer defaults aimed at Lumen + Virtual Shadow Maps
 
 ## Controls
@@ -29,7 +32,7 @@ A native Unreal Engine 5.8.2 third-person farming / life-sim / mining RPG protot
 | Mouse | Camera |
 | Space | Jump |
 | Left Shift | Sprint |
-| E | Interact / harvest |
+| E | Interact / harvest / open doors / sleep |
 | Left Mouse | Use equipped tool |
 | F | Plant seed on targeted tilled soil |
 | 1 | Hoe |
@@ -57,6 +60,8 @@ Create Blueprint children of the C++ actors so art can be assigned without chang
 - `AFarmCropActor` → assign growth-stage meshes and harvest values.
 - `AMineableNode` → assign high-detail rock / ore meshes and reward item IDs.
 - `AHarvestableTree` → assign full tree mesh, optional stump mesh and wood reward.
+- `AFarmBed` → assign the bed mesh; interacting with it restores energy and moves the calendar to the next day.
+- `AFarmDoor` → assign a door mesh whose pivot/placement is set up at the hinge; the C++ actor handles smooth open/close rotation.
 - `AFarmDayCycleManager` → optionally tune day length and starting hour.
 
 The default game mode already uses `AFarmPlayerCharacter` and automatically creates a day-cycle manager if the level does not contain one.
@@ -65,6 +70,9 @@ The default game mode already uses `AFarmPlayerCharacter` and automatically crea
 
 Final game art is **high-poly**, not merely “not low-poly.” The source-art target is dense, smooth geometry with real silhouette detail and PBR-capable materials. Unreal can then use Nanite where it is appropriate.
 
-The first finished Higgsfield tool set contains roughly **130,840 vertices / 129,596 polygons** across the axe, pickaxe, hoe and watering can. The source scene is kept separate from git and documented in `ExternalAssets/Higgsfield/ASSET_PIPELINE.md`.
+Current Higgsfield source scenes include:
 
-Low-poly catalog assets are not accepted as shipping art, even if they are useful as temporary scale tests.
+- High-poly tool pack: roughly **130,840 vertices / 129,596 polygons** across the axe, pickaxe, hoe and watering can.
+- High-poly farmhouse exterior: roughly **41,810 vertices / 39,590 polygons**, with separate structure, door, window, porch and roof-detail collections.
+
+Low-poly catalog assets are not accepted as shipping art, even if they are useful as temporary scale tests. See `ExternalAssets/Higgsfield/ASSET_PIPELINE.md` for source-scene IDs and import notes.

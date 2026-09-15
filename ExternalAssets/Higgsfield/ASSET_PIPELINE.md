@@ -45,6 +45,21 @@ Inspected source dimensions:
 
 The watering can intentionally carries much denser detail than the long-handled tools. Unreal should decide whether to retain full density, use Nanite, or generate optimized runtime variants after visual evaluation.
 
+## High-poly farmhouse exterior
+
+Project: `Farming 3D - High Poly Farmhouse Exterior`
+
+- Project ID: `2db4d662-d12d-4ef5-b151-124a8e9bb4b4`
+- Committed revision: `1`
+- Approx. source geometry: `41,810` vertices / `39,590` polygons
+- The source is organized into separate structure, doors, windows, porch and roof-detail collections.
+- Exterior detail includes geometric clapboard siding, roof shingles, gutters/downspouts, chimney relief, framed/mullioned windows, porch planks, rails/balusters, columns, layered door panels and hardware.
+- The exterior was built at metre scale for UE conversion to centimetres.
+
+The generated source scene also contains presentation ground/camera/light objects. Do **not** import those as gameplay meshes; bring in only the farmhouse collections needed by the level.
+
+The farmhouse's front door should be imported separately or split in Unreal and used with `AFarmDoor` so it can swing from a hinge instead of being baked permanently shut.
+
 ## Intended source asset list
 
 1. Player farmhouse exterior
