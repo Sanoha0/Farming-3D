@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
 #include "Farming/FarmSoilPlot.h"
+#include "Forestry/HarvestableTree.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interaction/FarmInteractable.h"
@@ -44,6 +45,7 @@ AFarmPlayerCharacter::AFarmPlayerCharacter()
     ToolVisual->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
     ToolVisual->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     ToolVisual->SetGenerateOverlapEvents(false);
+    ToolVisual->SetCastShadow(true);
 }
 
 void AFarmPlayerCharacter::BeginPlay()
@@ -122,8 +124,14 @@ void AFarmPlayerCharacter::StopSprint()
 
 void AFarmPlayerCharacter::SetActiveTool(EFarmToolType NewTool)
 {
+    if (ActiveTool == NewTool)
+    {
+        return;
+    }
+
     ActiveTool = NewTool;
     UpdateToolVisual();
+    OnToolEquipped(ActiveTool);
 }
 
 void AFarmPlayerCharacter::SelectHoe()
@@ -148,8 +156,19 @@ void AFarmPlayerCharacter::SelectAxe()
 
 void AFarmPlayerCharacter::UpdateToolVisual()
 {
-    const TObjectPtr<UStaticMesh>* FoundMesh = ToolMeshes.Find(ActiveTool);
-    ToolVisual->SetStaticMesh(FoundMesh ? FoundMesh->Get() : nullptr);
+    const FFarmToolVisualConfig* Config = ToolVisuals.Find(ActiveTool);
+    if (!Config || !Config->Mesh)
+    {
+        ToolVisual->SetStaticMesh(nullptr);
+        ToolVisual->SetVisibility(false, true);
+        return;
+    }
+
+    ToolVisual->SetStaticMesh(Config->Mesh);
+    ToolVisual->SetRelativeLocation(Config->RelativeLocation);
+    ToolVisual->SetRelativeRotation(Config->RelativeRotation);
+    ToolVisual->SetRelativeScale3D(Config->RelativeScale);
+    ToolVisual->SetVisibility(true, true);
 }
 
 bool AFarmPlayerCharacter::TraceFromCamera(FHitResult& OutHit, float Distance) const
@@ -183,6 +202,8 @@ void AFarmPlayerCharacter::Interact()
 
 void AFarmPlayerCharacter::UseTool()
 {
+    OnToolUsed(ActiveTool);
+
     FHitResult Hit;
     if (!TraceFromCamera(Hit, ToolDistance))
     {
@@ -198,6 +219,12 @@ void AFarmPlayerCharacter::UseTool()
     if (AMineableNode* Node = Cast<AMineableNode>(Hit.GetActor()))
     {
         Node->HitWithTool(ActiveTool, this);
+        return;
+    }
+
+    if (AHarvestableTree* Tree = Cast<AHarvestableTree>(Hit.GetActor()))
+    {
+        Tree->ChopWithTool(ActiveTool, this);
     }
 }
 

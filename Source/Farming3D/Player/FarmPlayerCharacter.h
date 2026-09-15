@@ -8,7 +8,6 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UFarmInventoryComponent;
-class UStaticMesh;
 class UStaticMeshComponent;
 
 UCLASS()
@@ -36,6 +35,12 @@ public:
 
     UFUNCTION(BlueprintCallable, Category="Farm|Farming")
     void TryPlant();
+
+    UFUNCTION(BlueprintImplementableEvent, Category="Farm|Tools")
+    void OnToolEquipped(EFarmToolType ToolType);
+
+    UFUNCTION(BlueprintImplementableEvent, Category="Farm|Tools")
+    void OnToolUsed(EFarmToolType ToolType);
 
 protected:
     virtual void BeginPlay() override;
@@ -67,8 +72,10 @@ private:
     UPROPERTY(VisibleAnywhere, Category="Tools")
     TObjectPtr<UStaticMeshComponent> ToolVisual;
 
+    // Each high-poly tool needs its own grip transform; a pickaxe and watering can
+    // cannot share a single hand offset and still look correct.
     UPROPERTY(EditDefaultsOnly, Category="Tools")
-    TMap<EFarmToolType, TObjectPtr<UStaticMesh>> ToolMeshes;
+    TMap<EFarmToolType, FFarmToolVisualConfig> ToolVisuals;
 
     UPROPERTY(EditAnywhere, Category="Interaction", meta=(ClampMin="100.0"))
     float InteractionDistance = 450.0f;

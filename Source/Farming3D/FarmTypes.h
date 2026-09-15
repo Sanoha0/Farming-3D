@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "FarmTypes.generated.h"
 
+class UStaticMesh;
+
 UENUM(BlueprintType)
 enum class EFarmToolType : uint8
 {
@@ -32,4 +34,22 @@ struct FFarmItemStack
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0"))
     int32 Quantity = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FFarmToolVisualConfig
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TObjectPtr<UStaticMesh> Mesh = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FVector RelativeLocation = FVector::ZeroVector;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FRotator RelativeRotation = FRotator::ZeroRotator;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FVector RelativeScale = FVector::OneVector;
 };
