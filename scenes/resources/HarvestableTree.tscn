@@ -1,30 +1,54 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/resources/resource_node.gd" id="1_resource"]
 
 [sub_resource type="CylinderShape3D" id="TrunkShape"]
-radius = 0.42
-height = 3.8
+radius = 0.5
+height = 4.4
 
 [sub_resource type="CylinderMesh" id="TrunkMesh"]
 top_radius = 0.34
-bottom_radius = 0.48
-height = 3.8
-radial_segments = 28
+bottom_radius = 0.58
+height = 4.4
+radial_segments = 64
+rings = 8
+
+[sub_resource type="CylinderMesh" id="BranchMesh"]
+top_radius = 0.10
+bottom_radius = 0.20
+height = 2.2
+radial_segments = 48
+rings = 5
+
+[sub_resource type="SphereMesh" id="CanopyLarge"]
+radius = 1.75
+height = 2.9
+radial_segments = 64
+rings = 32
+
+[sub_resource type="SphereMesh" id="CanopySmall"]
+radius = 1.15
+height = 1.9
+radial_segments = 56
+rings = 28
+
+[sub_resource type="TorusMesh" id="KnotMesh"]
+inner_radius = 0.07
+outer_radius = 0.19
+rings = 24
+ring_segments = 32
 
 [sub_resource type="StandardMaterial3D" id="BarkMat"]
-albedo_color = Color(0.31, 0.18, 0.08, 1)
-roughness = 0.95
+albedo_color = Color(0.25, 0.115, 0.045, 1)
+roughness = 0.97
 
-[sub_resource type="SphereMesh" id="CanopyMesh"]
-radius = 1.8
-height = 3.0
-radial_segments = 32
-rings = 20
+[sub_resource type="StandardMaterial3D" id="BarkDarkMat"]
+albedo_color = Color(0.16, 0.065, 0.025, 1)
+roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="LeafMat"]
-albedo_color = Color(0.13, 0.43, 0.16, 1)
-roughness = 0.9
+albedo_color = Color(0.075, 0.31, 0.105, 1)
+roughness = 0.92
 
 [node name="HarvestableTree" type="StaticBody3D"]
 script = ExtResource("1_resource")
@@ -34,15 +58,81 @@ reward_item = "wood"
 reward_amount = 5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-position = Vector3(0, 1.9, 0)
+position = Vector3(0, 2.2, 0)
 shape = SubResource("TrunkShape")
 
-[node name="Trunk" type="MeshInstance3D" parent="."]
-position = Vector3(0, 1.9, 0)
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Trunk" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 2.2, 0)
 mesh = SubResource("TrunkMesh")
 material_override = SubResource("BarkMat")
 
-[node name="Canopy" type="MeshInstance3D" parent="."]
-position = Vector3(0, 4.1, 0)
-mesh = SubResource("CanopyMesh")
+[node name="BranchA" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.55, 3.55, 0.05)
+rotation_degrees = Vector3(0, 0, -53)
+mesh = SubResource("BranchMesh")
+material_override = SubResource("BarkMat")
+
+[node name="BranchB" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.48, 3.8, -0.18)
+rotation_degrees = Vector3(18, 0, 50)
+scale = Vector3(0.88, 1.08, 0.88)
+mesh = SubResource("BranchMesh")
+material_override = SubResource("BarkMat")
+
+[node name="BranchC" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.05, 4.0, 0.55)
+rotation_degrees = Vector3(55, 0, 8)
+scale = Vector3(0.72, 0.92, 0.72)
+mesh = SubResource("BranchMesh")
+material_override = SubResource("BarkMat")
+
+[node name="KnotA" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.43, 2.35, 0.18)
+rotation_degrees = Vector3(90, 18, 0)
+mesh = SubResource("KnotMesh")
+material_override = SubResource("BarkDarkMat")
+
+[node name="KnotB" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.36, 1.45, -0.30)
+rotation_degrees = Vector3(72, -35, 0)
+scale = Vector3(0.72, 0.72, 0.72)
+mesh = SubResource("KnotMesh")
+material_override = SubResource("BarkDarkMat")
+
+[node name="CanopyCore" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 5.15, 0)
+scale = Vector3(1.18, 0.95, 1.08)
+mesh = SubResource("CanopyLarge")
+material_override = SubResource("LeafMat")
+
+[node name="CanopyLeft" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-1.05, 4.95, 0.18)
+scale = Vector3(0.95, 0.90, 0.94)
+mesh = SubResource("CanopySmall")
+material_override = SubResource("LeafMat")
+
+[node name="CanopyRight" type="MeshInstance3D" parent="Visual"]
+position = Vector3(1.15, 5.0, -0.12)
+scale = Vector3(1.0, 0.88, 0.92)
+mesh = SubResource("CanopySmall")
+material_override = SubResource("LeafMat")
+
+[node name="CanopyFront" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.20, 4.78, 1.0)
+scale = Vector3(0.92, 0.82, 0.96)
+mesh = SubResource("CanopySmall")
+material_override = SubResource("LeafMat")
+
+[node name="CanopyBack" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.16, 5.05, -1.0)
+scale = Vector3(0.90, 0.84, 0.95)
+mesh = SubResource("CanopySmall")
+material_override = SubResource("LeafMat")
+
+[node name="CanopyTop" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.10, 6.15, -0.05)
+scale = Vector3(0.90, 0.74, 0.88)
+mesh = SubResource("CanopySmall")
 material_override = SubResource("LeafMat")
