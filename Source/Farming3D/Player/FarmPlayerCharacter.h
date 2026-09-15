@@ -28,6 +28,15 @@ public:
     UFUNCTION(BlueprintPure, Category="Farm|Tools")
     EFarmToolType GetActiveTool() const { return ActiveTool; }
 
+    UFUNCTION(BlueprintPure, Category="Farm|Camera")
+    bool IsFirstPerson() const { return bFirstPersonActive; }
+
+    UFUNCTION(BlueprintCallable, Category="Farm|Camera")
+    void SetFirstPersonEnabled(bool bEnabled);
+
+    UFUNCTION(BlueprintCallable, Category="Farm|Camera")
+    void ToggleCameraMode();
+
     UFUNCTION(BlueprintCallable, Category="Farm|Tools")
     void SetActiveTool(EFarmToolType NewTool);
 
@@ -46,6 +55,9 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category="Farm|Tools")
     void OnToolUsed(EFarmToolType ToolType);
 
+    UFUNCTION(BlueprintImplementableEvent, Category="Farm|Camera")
+    void OnCameraModeChanged(bool bFirstPerson);
+
 protected:
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -63,13 +75,32 @@ private:
     void SelectAxe();
     bool TraceFromCamera(FHitResult& OutHit, float Distance) const;
     void UpdateToolVisual();
+    void ApplyCameraMode();
     float GetToolEnergyCost(EFarmToolType ToolType) const;
+
+    UPROPERTY(VisibleAnywhere, Category="Camera")
+    TObjectPtr<UCameraComponent> FirstPersonCamera;
 
     UPROPERTY(VisibleAnywhere, Category="Camera")
     TObjectPtr<USpringArmComponent> CameraBoom;
 
     UPROPERTY(VisibleAnywhere, Category="Camera")
     TObjectPtr<UCameraComponent> FollowCamera;
+
+    UPROPERTY(EditAnywhere, Category="Camera")
+    bool bStartInFirstPerson = true;
+
+    UPROPERTY(VisibleAnywhere, Category="Camera")
+    bool bFirstPersonActive = true;
+
+    UPROPERTY(EditAnywhere, Category="Camera")
+    FVector FirstPersonCameraOffset = FVector(10.0f, 0.0f, 72.0f);
+
+    UPROPERTY(EditAnywhere, Category="Camera", meta=(ClampMin="60.0", ClampMax="120.0"))
+    float FirstPersonFOV = 90.0f;
+
+    UPROPERTY(EditAnywhere, Category="Camera", meta=(ClampMin="150.0"))
+    float ThirdPersonArmLength = 450.0f;
 
     UPROPERTY(VisibleAnywhere, Category="Inventory")
     TObjectPtr<UFarmInventoryComponent> Inventory;
