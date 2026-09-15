@@ -4,19 +4,19 @@ signal tool_changed(tool_name: String)
 signal energy_changed(current: float, maximum: float)
 signal inventory_changed
 
-@export var walk_speed := 5.0
-@export var sprint_speed := 8.0
-@export var jump_velocity := 5.0
-@export var mouse_sensitivity := 0.0022
-@export var interaction_distance := 5.0
-@export var max_energy := 100.0
+@export var walk_speed: float = 5.0
+@export var sprint_speed: float = 8.0
+@export var jump_velocity: float = 5.0
+@export var mouse_sensitivity: float = 0.0022
+@export var interaction_distance: float = 5.0
+@export var max_energy: float = 100.0
 
-var energy := 100.0
-var first_person := true
-var active_tool := "hoe"
-var inventory := {"seed_turnip": 12, "wood": 0, "stone": 0, "turnip": 0}
-var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-var pitch := 0.0
+var energy: float = 100.0
+var first_person: bool = true
+var active_tool: String = "hoe"
+var inventory: Dictionary = {"seed_turnip": 12, "wood": 0, "stone": 0, "turnip": 0}
+var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity"))
+var pitch: float = 0.0
 
 @onready var head: Node3D = $Head
 @onready var first_camera: Camera3D = $Head/FirstPersonCamera
@@ -36,7 +36,7 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
-		pitch = clamp(pitch - event.relative.y * mouse_sensitivity, deg_to_rad(-85), deg_to_rad(85))
+		pitch = clampf(pitch - event.relative.y * mouse_sensitivity, deg_to_rad(-85.0), deg_to_rad(85.0))
 		head.rotation.x = pitch
 		third_pivot.rotation.x = pitch
 	if event.is_action_pressed("ui_cancel"):
@@ -48,10 +48,10 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
 
-	var input_vec := Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
-	var direction := (transform.basis * Vector3(input_vec.x, 0.0, input_vec.y)).normalized()
-	var speed := sprint_speed if Input.is_action_pressed("sprint") else walk_speed
-	if direction:
+	var input_vec: Vector2 = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	var direction: Vector3 = (transform.basis * Vector3(input_vec.x, 0.0, input_vec.y)).normalized()
+	var speed: float = sprint_speed if Input.is_action_pressed("sprint") else walk_speed
+	if not direction.is_zero_approx():
 		velocity.x = direction.x * speed
 		velocity.z = direction.z * speed
 	else:
@@ -100,42 +100,45 @@ func _update_tool_visual() -> void:
 			tool_mesh.scale = Vector3(0.9, 0.75, 1.25)
 
 func _ray_target() -> Object:
-	var camera := get_viewport().get_camera_3d()
+	var camera: Camera3D = get_viewport().get_camera_3d()
 	if camera == null:
 		return null
-	var origin := camera.global_position
-	var end := origin + -camera.global_transform.basis.z * interaction_distance
-	var query := PhysicsRayQueryParameters3D.create(origin, end)
+	var origin: Vector3 = camera.global_position
+	var ray_end: Vector3 = origin + -camera.global_transform.basis.z * interaction_distance
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin, ray_end)
 	query.exclude = [get_rid()]
-	var hit := get_world_3d().direct_space_state.intersect_ray(query)
-	return hit.get("collider") if not hit.is_empty() else null
+	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return null
+	return hit.get("collider") as Object
 
 func _use_tool() -> void:
-	var target := _ray_target()
+	var target: Object = _ray_target()
 	if target == null or not target.has_method("apply_tool"):
 		return
-	var cost := {"hoe": 2.0, "water": 1.0, "pickaxe": 3.0, "axe": 3.0}.get(active_tool, 0.0)
+	var tool_costs: Dictionary = {"hoe": 2.0, "water": 1.0, "pickaxe": 3.0, "axe": 3.0}
+	var cost: float = float(tool_costs.get(active_tool, 0.0))
 	if energy < cost:
 		return
-	if target.apply_tool(active_tool, self):
+	if target.call("apply_tool", active_tool, self):
 		energy -= cost
 		energy_changed.emit(energy, max_energy)
 
 func _interact() -> void:
-	var target := _ray_target()
+	var target: Object = _ray_target()
 	if target != null and target.has_method("interact"):
-		target.interact(self)
+		target.call("interact", self)
 
 func _plant() -> void:
-	var target := _ray_target()
+	var target: Object = _ray_target()
 	if target != null and target.has_method("plant_seed"):
-		target.plant_seed(self)
+		target.call("plant_seed", self)
 
-func add_item(item_id: String, amount := 1) -> void:
+func add_item(item_id: String, amount: int = 1) -> void:
 	inventory[item_id] = int(inventory.get(item_id, 0)) + amount
 	inventory_changed.emit()
 
-func remove_item(item_id: String, amount := 1) -> bool:
+func remove_item(item_id: String, amount: int = 1) -> bool:
 	if int(inventory.get(item_id, 0)) < amount:
 		return false
 	inventory[item_id] = int(inventory[item_id]) - amount
