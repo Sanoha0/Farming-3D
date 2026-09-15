@@ -1,6 +1,8 @@
 #include "Game/Farming3DGameMode.h"
 
+#include "Engine/World.h"
 #include "EngineUtils.h"
+#include "GameFramework/Controller.h"
 #include "Inventory/FarmInventoryComponent.h"
 #include "Player/FarmPlayerCharacter.h"
 #include "World/FarmDayCycleManager.h"

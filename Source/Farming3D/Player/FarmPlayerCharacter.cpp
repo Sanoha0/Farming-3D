@@ -2,7 +2,9 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
 #include "Farming/FarmSoilPlot.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -42,6 +44,13 @@ AFarmPlayerCharacter::AFarmPlayerCharacter()
     ToolVisual->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
     ToolVisual->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     ToolVisual->SetGenerateOverlapEvents(false);
+}
+
+void AFarmPlayerCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+    GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+    UpdateToolVisual();
 }
 
 void AFarmPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -139,8 +148,8 @@ void AFarmPlayerCharacter::SelectAxe()
 
 void AFarmPlayerCharacter::UpdateToolVisual()
 {
-    UStaticMesh* const* FoundMesh = ToolMeshes.Find(ActiveTool);
-    ToolVisual->SetStaticMesh(FoundMesh ? *FoundMesh : nullptr);
+    const TObjectPtr<UStaticMesh>* FoundMesh = ToolMeshes.Find(ActiveTool);
+    ToolVisual->SetStaticMesh(FoundMesh ? FoundMesh->Get() : nullptr);
 }
 
 bool AFarmPlayerCharacter::TraceFromCamera(FHitResult& OutHit, float Distance) const

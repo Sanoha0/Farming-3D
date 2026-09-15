@@ -1,6 +1,7 @@
 #include "Farming/FarmSoilPlot.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
 #include "EngineUtils.h"
 #include "Farming/FarmCropActor.h"
 #include "Inventory/FarmInventoryComponent.h"
