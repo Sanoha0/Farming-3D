@@ -20,18 +20,25 @@ AFarmPlayerCharacter::AFarmPlayerCharacter()
 
     GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
     bUseControllerRotationPitch = false;
-    bUseControllerRotationYaw = false;
+    bUseControllerRotationYaw = true;
     bUseControllerRotationRoll = false;
 
-    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
     GetCharacterMovement()->JumpZVelocity = 520.0f;
     GetCharacterMovement()->AirControl = 0.25f;
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
+    FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+    FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
+    FirstPersonCamera->SetRelativeLocation(FirstPersonCameraOffset);
+    FirstPersonCamera->bUsePawnControlRotation = true;
+    FirstPersonCamera->FieldOfView = FirstPersonFOV;
+    FirstPersonCamera->SetActive(true);
+
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = 450.0f;
+    CameraBoom->TargetArmLength = ThirdPersonArmLength;
     CameraBoom->bUsePawnControlRotation = true;
     CameraBoom->bEnableCameraLag = true;
     CameraBoom->CameraLagSpeed = 12.0f;
@@ -39,6 +46,7 @@ AFarmPlayerCharacter::AFarmPlayerCharacter()
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
+    FollowCamera->SetActive(false);
 
     Inventory = CreateDefaultSubobject<UFarmInventoryComponent>(TEXT("Inventory"));
     Stats = CreateDefaultSubobject<UFarmPlayerStatsComponent>(TEXT("Stats"));
@@ -54,6 +62,8 @@ void AFarmPlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+    bFirstPersonActive = bStartInFirstPerson;
+    ApplyCameraMode();
     UpdateToolVisual();
 }
 
@@ -73,6 +83,7 @@ void AFarmPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &AFarmPlayerCharacter::Interact);
     PlayerInputComponent->BindAction(TEXT("UseTool"), IE_Pressed, this, &AFarmPlayerCharacter::UseTool);
     PlayerInputComponent->BindAction(TEXT("Plant"), IE_Pressed, this, &AFarmPlayerCharacter::TryPlant);
+    PlayerInputComponent->BindAction(TEXT("ToggleCamera"), IE_Pressed, this, &AFarmPlayerCharacter::ToggleCameraMode);
 
     PlayerInputComponent->BindAction(TEXT("ToolHoe"), IE_Pressed, this, &AFarmPlayerCharacter::SelectHoe);
     PlayerInputComponent->BindAction(TEXT("ToolWater"), IE_Pressed, this, &AFarmPlayerCharacter::SelectWateringCan);
@@ -122,6 +133,47 @@ void AFarmPlayerCharacter::StartSprint()
 void AFarmPlayerCharacter::StopSprint()
 {
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void AFarmPlayerCharacter::SetFirstPersonEnabled(bool bEnabled)
+{
+    if (bFirstPersonActive == bEnabled)
+    {
+        return;
+    }
+
+    bFirstPersonActive = bEnabled;
+    ApplyCameraMode();
+    OnCameraModeChanged(bFirstPersonActive);
+}
+
+void AFarmPlayerCharacter::ToggleCameraMode()
+{
+    SetFirstPersonEnabled(!bFirstPersonActive);
+}
+
+void AFarmPlayerCharacter::ApplyCameraMode()
+{
+    if (!FirstPersonCamera || !FollowCamera || !CameraBoom)
+    {
+        return;
+    }
+
+    FirstPersonCamera->SetRelativeLocation(FirstPersonCameraOffset);
+    FirstPersonCamera->FieldOfView = FirstPersonFOV;
+    CameraBoom->TargetArmLength = ThirdPersonArmLength;
+
+    FirstPersonCamera->SetActive(bFirstPersonActive);
+    FollowCamera->SetActive(!bFirstPersonActive);
+
+    bUseControllerRotationYaw = bFirstPersonActive;
+    GetCharacterMovement()->bOrientRotationToMovement = !bFirstPersonActive;
+
+    if (bFirstPersonActive && Controller)
+    {
+        const FRotator ControlRotation = Controller->GetControlRotation();
+        SetActorRotation(FRotator(0.0f, ControlRotation.Yaw, 0.0f));
+    }
 }
 
 void AFarmPlayerCharacter::SetActiveTool(EFarmToolType NewTool)
@@ -192,13 +244,14 @@ float AFarmPlayerCharacter::GetToolEnergyCost(EFarmToolType ToolType) const
 
 bool AFarmPlayerCharacter::TraceFromCamera(FHitResult& OutHit, float Distance) const
 {
-    if (!FollowCamera || !GetWorld())
+    const UCameraComponent* ActiveCamera = bFirstPersonActive ? FirstPersonCamera.Get() : FollowCamera.Get();
+    if (!ActiveCamera || !GetWorld())
     {
         return false;
     }
 
-    const FVector Start = FollowCamera->GetComponentLocation();
-    const FVector End = Start + FollowCamera->GetForwardVector() * Distance;
+    const FVector Start = ActiveCamera->GetComponentLocation();
+    const FVector End = Start + ActiveCamera->GetForwardVector() * Distance;
 
     FCollisionQueryParams Params(SCENE_QUERY_STAT(FarmInteractionTrace), false, this);
     return GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, Params);
