@@ -1,0 +1,159 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/main_farm.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/farming/FarmPlot.tscn" id="3_plot"]
+[ext_resource type="PackedScene" path="res://scenes/buildings/Cabin.tscn" id="4_cabin"]
+[ext_resource type="PackedScene" path="res://scenes/resources/MineableRock.tscn" id="5_rock"]
+[ext_resource type="PackedScene" path="res://scenes/resources/HarvestableTree.tscn" id="6_tree"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="7_hud"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMaterial"]
+sky_top_color = Color(0.18, 0.42, 0.72, 1)
+sky_horizon_color = Color(0.74, 0.84, 0.94, 1)
+ground_bottom_color = Color(0.08, 0.09, 0.08, 1)
+ground_horizon_color = Color(0.45, 0.52, 0.42, 1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMaterial")
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 2
+sky = SubResource("Sky")
+tonemap_mode = 2
+
+[sub_resource type="PlaneMesh" id="GroundMesh"]
+size = Vector2(120, 120)
+subdivide_width = 16
+subdivide_depth = 16
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.18, 0.42, 0.13, 1)
+roughness = 1.0
+
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(120, 0.2, 120)
+
+[node name="MainFarm" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="Sun" type="DirectionalLight3D" parent="Lighting"]
+rotation_degrees = Vector3(-48, -28, 0)
+light_energy = 1.4
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("GroundMesh")
+material_override = SubResource("GroundMaterial")
+
+[node name="Collision" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -0.1, 0)
+shape = SubResource("GroundShape")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector3(0, 0.15, 10)
+
+[node name="Cabin" parent="." instance=ExtResource("4_cabin")]
+position = Vector3(-12, 0, -8)
+
+[node name="FarmArea" type="Node3D" parent="."]
+position = Vector3(2, 0.02, 0)
+
+[node name="Plot01" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(-3, 0, 0)
+[node name="Plot02" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(-1, 0, 0)
+[node name="Plot03" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(1, 0, 0)
+[node name="Plot04" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(3, 0, 0)
+[node name="Plot05" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(-3, 0, -2)
+[node name="Plot06" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(-1, 0, -2)
+[node name="Plot07" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(1, 0, -2)
+[node name="Plot08" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(3, 0, -2)
+[node name="Plot09" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(-3, 0, -4)
+[node name="Plot10" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(-1, 0, -4)
+[node name="Plot11" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(1, 0, -4)
+[node name="Plot12" parent="FarmArea" instance=ExtResource("3_plot")]
+position = Vector3(3, 0, -4)
+
+[node name="MineArea" type="Node3D" parent="."]
+position = Vector3(22, 0, -18)
+
+[node name="Rock01" parent="MineArea" instance=ExtResource("5_rock")]
+position = Vector3(0, 0, 0)
+[node name="Rock02" parent="MineArea" instance=ExtResource("5_rock")]
+position = Vector3(2.8, 0, -1.3)
+[node name="Rock03" parent="MineArea" instance=ExtResource("5_rock")]
+position = Vector3(-2.6, 0, -2.5)
+[node name="MineEntranceMarker" type="Marker3D" parent="MineArea"]
+position = Vector3(0, 0, -7)
+
+[node name="Trees" type="Node3D" parent="."]
+[node name="Tree01" parent="Trees" instance=ExtResource("6_tree")]
+position = Vector3(-22, 0, -3)
+[node name="Tree02" parent="Trees" instance=ExtResource("6_tree")]
+position = Vector3(-18, 0, 8)
+[node name="Tree03" parent="Trees" instance=ExtResource("6_tree")]
+position = Vector3(16, 0, 10)
+[node name="Tree04" parent="Trees" instance=ExtResource("6_tree")]
+position = Vector3(24, 0, 4)
+[node name="Tree05" parent="Trees" instance=ExtResource("6_tree")]
+position = Vector3(-27, 0, -18)
+
+[node name="EditMe_Markers" type="Node3D" parent="."]
+[node name="BarnFuture" type="Marker3D" parent="EditMe_Markers"]
+position = Vector3(12, 0, -12)
+[node name="GreenhouseFuture" type="Marker3D" parent="EditMe_Markers"]
+position = Vector3(-4, 0, -20)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("7_hud")
+
+[node name="TopLeft" type="VBoxContainer" parent="HUD"]
+offset_left = 24.0
+offset_top = 22.0
+offset_right = 900.0
+offset_bottom = 160.0
+theme_override_constants/separation = 6
+
+[node name="Time" type="Label" parent="HUD/TopLeft"]
+theme_override_font_sizes/font_size = 22
+text = "06:00 | Spring 1, Year 1"
+
+[node name="Status" type="Label" parent="HUD/TopLeft"]
+theme_override_font_sizes/font_size = 18
+text = "Tool: Hoe   Energy: 100/100   [V] Camera"
+
+[node name="Inventory" type="Label" parent="HUD/TopLeft"]
+theme_override_font_sizes/font_size = 16
+text = "Inventory"
+
+[node name="Crosshair" type="Label" parent="HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -7.0
+offset_top = -14.0
+offset_right = 7.0
+offset_bottom = 14.0
+theme_override_font_sizes/font_size = 24
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1

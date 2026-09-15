@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/farming/farm_plot.gd" id="1_plot"]
+
+[sub_resource type="BoxShape3D" id="PlotShape"]
+size = Vector3(1.8, 0.18, 1.8)
+
+[sub_resource type="BoxMesh" id="PlotMesh"]
+size = Vector3(1.8, 0.16, 1.8)
+
+[sub_resource type="StandardMaterial3D" id="UntilledMat"]
+albedo_color = Color(0.32, 0.24, 0.13, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="TilledMat"]
+albedo_color = Color(0.23, 0.13, 0.07, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="WateredMat"]
+albedo_color = Color(0.12, 0.07, 0.04, 1)
+roughness = 0.82
+
+[sub_resource type="SphereMesh" id="CropMesh"]
+radius = 0.34
+height = 0.68
+radial_segments = 24
+rings = 12
+
+[sub_resource type="StandardMaterial3D" id="CropMat"]
+albedo_color = Color(0.24, 0.72, 0.27, 1)
+roughness = 0.72
+
+[node name="FarmPlot" type="StaticBody3D" groups=["farm_plots"]]
+script = ExtResource("1_plot")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.09, 0)
+shape = SubResource("PlotShape")
+
+[node name="UntilledVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.08, 0)
+mesh = SubResource("PlotMesh")
+material_override = SubResource("UntilledMat")
+
+[node name="TilledVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.08, 0)
+mesh = SubResource("PlotMesh")
+material_override = SubResource("TilledMat")
+visible = false
+
+[node name="WateredVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.08, 0)
+mesh = SubResource("PlotMesh")
+material_override = SubResource("WateredMat")
+visible = false
+
+[node name="CropVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.55, 0)
+mesh = SubResource("CropMesh")
+material_override = SubResource("CropMat")
+visible = false

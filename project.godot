@@ -1,0 +1,21 @@
+; Farming 3D - Godot 4 project
+; The main world is a real editable scene at res://scenes/world/MainFarm.tscn
+config_version=5
+
+[application]
+config/name="Farming 3D"
+run/main_scene="res://scenes/world/MainFarm.tscn"
+
+[autoload]
+InputBootstrap="*res://scripts/systems/input_bootstrap.gd"
+
+[display]
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+textures/default_filters/use_nearest_mipmap_filter=false
+lights_and_shadows/directional_shadow/size=4096
