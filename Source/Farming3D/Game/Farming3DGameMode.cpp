@@ -15,8 +15,8 @@ AFarming3DGameMode::AFarming3DGameMode()
 
 void AFarming3DGameMode::StartPlay()
 {
-    Super::StartPlay();
-
+    // The clock must exist before Super::StartPlay() begins actor BeginPlay calls.
+    // Soil plots bind to its OnNewDay event from their own BeginPlay.
     bool bHasDayCycle = false;
     for (TActorIterator<AFarmDayCycleManager> It(GetWorld()); It; ++It)
     {
@@ -28,6 +28,8 @@ void AFarming3DGameMode::StartPlay()
     {
         GetWorld()->SpawnActor<AFarmDayCycleManager>(DayCycleClass, FVector::ZeroVector, FRotator::ZeroRotator);
     }
+
+    Super::StartPlay();
 }
 
 void AFarming3DGameMode::RestartPlayer(AController* NewPlayer)
