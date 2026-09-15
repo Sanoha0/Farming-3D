@@ -20,20 +20,20 @@ func _ensure_action(action: StringName) -> void:
 	if not InputMap.has_action(action):
 		InputMap.add_action(action)
 
-func _add_key(action: StringName, keycode: Key) -> void:
+func _add_key(action: StringName, keycode: int) -> void:
 	_ensure_action(action)
 	for existing in InputMap.action_get_events(action):
 		if existing is InputEventKey and existing.physical_keycode == keycode:
 			return
-	var event := InputEventKey.new()
-	event.physical_keycode = keycode
-	InputMap.action_add_event(action, event)
+	var key_event: InputEventKey = InputEventKey.new()
+	key_event.physical_keycode = keycode
+	InputMap.action_add_event(action, key_event)
 
-func _add_mouse(action: StringName, button: MouseButton) -> void:
+func _add_mouse(action: StringName, button: int) -> void:
 	_ensure_action(action)
 	for existing in InputMap.action_get_events(action):
 		if existing is InputEventMouseButton and existing.button_index == button:
 			return
-	var event := InputEventMouseButton.new()
-	event.button_index = button
-	InputMap.action_add_event(action, event)
+	var mouse_event: InputEventMouseButton = InputEventMouseButton.new()
+	mouse_event.button_index = button
+	InputMap.action_add_event(action, mouse_event)
