@@ -1,33 +1,3 @@
-# Unreal Engine generated files
-Binaries/
-DerivedDataCache/
-Intermediate/
-Saved/
-.vs/
-.vscode/
-*.VC.db
-*.opensdf
-*.sdf
-*.sln
-*.suo
-*.xcodeproj
-*.xcworkspace
-
-# Build/package output
-Build/Receipts/
-StagedBuilds/
-Packaged/
-
-# IDE/user files
-.idea/
-*.user
-*.userprefs
-
-# OS
-.DS_Store
-Thumbs.db
-
-# External raw source-art downloads (keep manifests/scripts in git)
-ExternalAssets/Higgsfield/*.glb
-ExternalAssets/Higgsfield/*.blend
-ExternalAssets/Higgsfield/*.fbx
+# Godot 4+ specific ignores
+.godot/
+/android/
